@@ -21,6 +21,8 @@ jobs:
     - name: go build
       run: go build -o user-service 
       
+    #Build and Push image to dockerhub  
+      
     - name: Build and Push Docker Image
       uses: mr-smithers-excellent/docker-build-push@v4
       with:
@@ -28,6 +30,13 @@ jobs:
         registry: docker.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Trigger deploy
+      uses: Consensys/kubernetes-action@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      with:
+        args: apply deployment.yaml
         
       
       
